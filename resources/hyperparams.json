@@ -1,0 +1,126 @@
+{
+  "epochs": 5,
+  "dropout": 0.5,
+  "batch_size": 8,
+  "tasks": ["pos", "lemma"],
+  "nn_config": {
+    "general": {
+      "optimizer": {
+        "type": "Adam",
+        "lr_decrease_factor": 2,
+        "initial_lr": 0.002,
+        "lr_decay": 0.0
+      }
+    },
+    "shared_part": {
+      "builder": "BiLSTM",
+      "config": {
+        "lstm_cell_size": 200,
+        "bilstm_layer_count": 1,
+        "skip_connection": "concat",
+        "sparse_input_prob": 0
+      },
+      "features_config": {
+        "word_embedding": {
+          "we_dense_size": 100,
+          "path": "<path to the word embeddings file>",
+          "trainable": false,
+          "lowercase": true
+        },
+        "word_characters": {
+          "segmenter": "char",
+          "embed_size": 50,
+          "min_frequency": 1,
+          "trainable": true,
+          "aggregator": "cnn",
+          "aggregator_config": {
+            "cnn_kernels": [
+              { "size": 3, "count": 512, "dilation": 1},
+              { "size": 3, "count": 124, "dilation": 2},
+              { "size": 3, "count": 64, "dilation": 4}
+            ]
+          },
+          "highway_layer": true
+        },
+        "bpe_subwords": {
+          "segmenter": "bpe",
+          "segmenter_config": {
+            "language": "hy",
+            "vocab_size": 50000
+          },
+          "min_frequency": 1,
+          "embedding_path": "<bpe subwords embeddings path>",
+          "trainable": true,
+          "aggregator": "rnn",
+          "aggregator_config": {
+            "lstm_cell_size": 50,
+            "bilstm_layer_count": 1
+          },
+          "highway_layer": true
+        },
+        "morfessor_subwords": {
+          "segmenter": "morfessor",
+          "segmenter_config": {
+            "path": "<morfessor path>"
+          },
+          "embedding_path": "<morfessor subwords embeddings path>",
+          "embed_size": 50,
+          "min_frequency": 1,
+          "trainable": true,
+          "aggregator": "average",
+          "highway_layer": true
+        },
+        "word_trained_embedding": {
+          "trainable": true,
+          "size": 50,
+          "min_frequency": 5,
+          "lowercase": true
+        }
+      }
+    },
+    "pos": {
+      "builder": "pos_dense",
+      "config": {
+        "shared_name": "bilstm_and_word_features",
+        "splitting":"pos_UXF",
+        "dense_size": 300,
+        "loss_weights": {
+          "default": 0.2,
+          "UPOS": 0.5,
+          "XPOS": 0.5,
+          "FEATS": 0.2
+        }
+      }
+    },
+    "lemma": {
+      "builder": "lemma_combo",
+      "config": {
+        "shared_name": "bilstm_and_word_features",
+        "cnn_bilstm_dense_size": 32,
+        "cnn_kernels": [
+          { "size": 3, "count": 256, "dilation": 1},
+          { "size": 3, "count": 256, "dilation": 2},
+          { "size": 3, "count": 256, "dilation": 4}
+        ],
+        "loss_weights": {
+          "LEMMA": 1.0
+        }
+      },
+      "features_config": {
+        "input_subwords": {
+          "min_frequency": 1,
+          "embed_size": 256,
+          "embedding_path": "<subwords embeddings path>",
+          "trainable": true,
+          "segmenter": "char",
+          "highway_layer": true
+        },
+        "output_subwords": {
+          "min_frequency": 1,
+          "max_word_length": 15,
+          "segmenter": "char"
+        }
+      }
+    }
+  }
+}

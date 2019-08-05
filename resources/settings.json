@@ -1,0 +1,26 @@
+{
+  "random_seed": [12345, 54321, 1234, 4321, 123],
+  "model_dir": "<path to save tagger models>",
+  "train_set": {
+    "path": "<path to the conllu file with the train set",
+    "shuffler": {
+      "seed": 12345,
+      "max_batch_size": 100
+    }
+  },
+  "dev_set": {
+    "path": "<path to the conllu file with the development set>",
+    "results_path": "<path to save annotated dev set> optional parameter"
+  },
+  "test_set": {
+    "path": "<path to the conllu file with the test set>",
+    "results_path": "<path to save annotated test set> optional parameter"
+  },
+  "cmp_metric": {
+    "fields": ["UPOS", "Feats", "Lemmas"],
+    "metric": "f1"
+  },
+  "metric_printer": {
+    "fields": ["UPOS", "Feats", "Lemmas"]
+  }
+}

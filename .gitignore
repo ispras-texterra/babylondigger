@@ -1,0 +1,9 @@
+# Build files
+*.pyc
+
+# Idea files
+.idea/
+
+# Unit tests coverage
+.coverage
+htmlcov/**

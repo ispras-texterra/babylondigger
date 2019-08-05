@@ -1,0 +1,14 @@
+{
+  "param1":[
+    {"epochs": 100},
+    {"epochs": 130}
+  ],
+  "param2":[
+    {"nn_config": {"general": {"optimizer": {"type": "RMSProp"}}}},
+    {"nn_config": {"general": {"optimizer": {"type": "Adam"}}}}
+  ],
+  "param3":[
+    {"nn_config": {"general": {"optimizer": {"initial_lr": 0.001}}}},
+    {"nn_config": {"general": {"optimizer": {"initial_lr": 0.01}}}}
+  ]
+}
